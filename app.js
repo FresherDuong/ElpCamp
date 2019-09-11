@@ -27,12 +27,18 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+app.use(function(req, res, next){ // Middleware for every routes
+    res.locals.currentUser = req.user; // return current user
+    next(); // next references to route handler
+});
+
 //RESTful ROUTE
 app.get("/", function(req, res){
     res.render("landing");
 })
 
 app.get("/campgrounds", function(req, res){
+    // console.log(req.user); // passport create data
     Campground.find({}, function(err, allCampgrounds){
         if(err){
             console.log("Opps, something went wrong in Mongo !");
@@ -82,7 +88,7 @@ app.get("/campgrounds/:id", function(req, res){
 // COMMENT ROUTE
 // ===============
 
-app.get("/campgrounds/:id/comments/new", function(req, res){
+app.get("/campgrounds/:id/comments/new", isLogIn, function(req, res){
     Campground.findById(req.params.id, function(err, campground){
         if(err){
             console.log(err);
@@ -92,7 +98,7 @@ app.get("/campgrounds/:id/comments/new", function(req, res){
     });
 });
 
-app.post("/campgrounds/:id/comments", function(req, res){
+app.post("/campgrounds/:id/comments", isLogIn, function(req, res){
     Campground.findById(req.params.id, function(err, campground){
         if(err){
             console.log(err);
@@ -132,6 +138,34 @@ app.post("/register", function(req, res){
         });
     });
 });
+
+// Show log in form
+app.get("/login", function(req, res){
+    res.render("login");
+});
+
+// Handling login logic
+app.post("/login", passport.authenticate("local",
+{
+    successRedirect: "/campgrounds",
+    failureRedirect: "/login"
+}), 
+function(req, res){
+    
+});
+
+// Logout logic
+app.get("/logout", function(req, res){
+    req.logOut();
+    res.redirect("/campgrounds");
+});
+
+function isLogIn(req, res, next){
+    if(req.isAuthenticated()){
+        return next();
+    }
+    res.redirect("/login");
+}
 
 //STARTING SERVER
 app.listen(8080, function(){

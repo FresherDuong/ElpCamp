@@ -1,0 +1,25 @@
+ <% include ../partials/header %>
+ <div class="container">
+     <header class="jumbotron">
+        <h1>This Is The Camp Grounds</h1>
+        <p>View our hand-picked camp ground from all over the world</p>
+        <a class="btn btn-success" href="/campgrounds/new">Create new Camp Ground</a>
+     </header>
+
+     <div class="row  text-center" style="display: flex; flex-wrap: wrap;">
+        <% campgrounds.forEach(function(campground){ %>
+        <div class="col-lg-4 col-md-4 col-sm-6">
+            <div class="img-thumbnail">
+                <img src="<%= campground.image %>" alt="IMG">
+                <div class="caption">
+                    <h4><%= campground.name %></h4>
+                </div>
+                <div>
+                    <a href="/campgrounds/<%= campground._id %>" class="btn btn-info btn-block" style="width: 30%; margin: 0 auto;">Description</a>
+                </div>
+            </div>
+        </div>
+        <% }); %>
+     </div>
+</div>
+<% include ../partials/footer %>    

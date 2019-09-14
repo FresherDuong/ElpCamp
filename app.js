@@ -2,6 +2,7 @@ var express     = require("express"),
 app             = express(),
 bodyParser      = require("body-parser"),
 mongoose        = require("mongoose"),
+flash           = require("connect-flash"),
 passport        = require("passport"),
 LocalStrategy   = require("passport-local"),
 methodOverride  = require("method-override"),
@@ -32,9 +33,12 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+app.use(flash());
+
 //Check for dislay login logout singin
 app.use(function(req, res, next){ // Middleware for every routes
     res.locals.currentUser = req.user; // return current user
+    res.locals.success = req.flash("success"); // for flash message
     next(); // next references to route handler
 });
 

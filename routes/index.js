@@ -47,14 +47,8 @@ function(req, res){
 // Logout logic
 router.get("/logout", function(req, res){
     req.logOut();
+    req.flash("success", "U has logged out.");
     res.redirect("/campgrounds");
 });
-
-function isLogIn(req, res, next){
-    if(req.isAuthenticated()){
-        return next();
-    }
-    res.redirect("/login");
-}
 
 module.exports = router;
